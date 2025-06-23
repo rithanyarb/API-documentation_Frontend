@@ -19,7 +19,7 @@ Make sure the following are installed:
 
 ## Tech Stack
 
-- **React 18** - Frontend framework
+- **Vite + React jsx** - Frontend framework
 - **React Router** - Client-side routing
 - **Tailwind CSS** - Utility-first CSS framework
 - **Lucide React** - Beautiful icons
