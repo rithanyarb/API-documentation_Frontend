@@ -1,0 +1,59 @@
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Animation for loading spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Custom gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #ec4899, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(30, 41, 59, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(236, 72, 153, 0.2);
+}
+
+/* Hover effects */
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+}
+
+/* File drop zone hover effect */
+.file-drop-zone:hover {
+  background: rgba(30, 41, 59, 0.5);
+  border-color: rgba(236, 72, 153, 0.5);
+}
+
+/* Button press effect */
+.btn-press:active {
+  transform: scale(0.98);
+}
