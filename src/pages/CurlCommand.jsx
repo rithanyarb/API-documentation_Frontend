@@ -39,9 +39,33 @@ export default function CurlCommand() {
     setCurl(formatted);
   };
 
+  const validateCurl = (curlInput) => {
+    const errors = [];
+
+    if (!curlInput.trim().startsWith("curl")) {
+      errors.push("Command should start with 'curl'");
+    }
+
+    const urlMatch = curlInput.match(/['\"](https?:\/\/[^'\"]+)['\"]/);
+    if (!urlMatch) {
+      errors.push(
+        "No valid URL found. Make sure the URL is quoted and includes http:// or https://"
+      );
+    }
+
+    return errors;
+  };
+
   const handleUpload = async () => {
     if (!curl) {
       setError("Please enter a cURL command");
+      return;
+    }
+
+    //cURL check
+    const validationErrors = validateCurl(curl);
+    if (validationErrors.length > 0) {
+      setError("Invalid cURL command: " + validationErrors.join(", "));
       return;
     }
 
@@ -49,13 +73,17 @@ export default function CurlCommand() {
     setError("");
 
     try {
+      console.log("Uploading cURL:", curl);
       const response = await uploadCurl({ curl });
+      console.log("Upload response:", response);
 
       if (response.project_id) {
         const templatesResponse = await fetchTemplates(response.project_id);
+        console.log("Templates response:", templatesResponse);
         setTemplates(templatesResponse);
       }
     } catch (error) {
+      console.error("Upload error:", error);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -72,7 +100,9 @@ export default function CurlCommand() {
             </div>
             <div>
               <h2 className="text-2xl font-bold text-gray-800">cURL Command</h2>
-              <p className="text-gray-600">Generate from cURL command</p>
+              <p className="text-gray-600">
+                Generate API documentation from cURL command
+              </p>
             </div>
           </div>
 
@@ -89,11 +119,16 @@ export default function CurlCommand() {
               </label>
               <textarea
                 placeholder="Paste your cURL command here..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
-                rows={6}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none font-mono text-sm"
+                rows={8}
                 value={curl}
                 onChange={(e) => setCurl(e.target.value)}
               />
+              {curl && (
+                <div className="mt-2 text-xs text-gray-500">
+                  Character count: {curl.length}
+                </div>
+              )}
             </div>
 
             <div className="flex gap-4">
@@ -104,6 +139,15 @@ export default function CurlCommand() {
                 className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Format cURL
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCurl("")}
+                disabled={!curl}
+                className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Clear
               </button>
             </div>
 
@@ -122,7 +166,7 @@ export default function CurlCommand() {
                   Processing... Don't Switch Tabs
                 </>
               ) : (
-                "Upload & Generate"
+                "Upload & Generate Documentation"
               )}
             </button>
           </div>

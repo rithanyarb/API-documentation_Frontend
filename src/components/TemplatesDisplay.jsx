@@ -31,12 +31,15 @@ const TemplatesDisplay = ({ templates }) => {
         body: parsedBody || null,
       };
 
+      console.log("Testing endpoint with data:", testData);
+
       const result = await testEndpoint(testData);
       setTestResults((prev) => ({
         ...prev,
         [endpointId]: result,
       }));
     } catch (error) {
+      console.error("Test endpoint error:", error);
       setTestResults((prev) => ({
         ...prev,
         [endpointId]: {
@@ -58,15 +61,22 @@ const TemplatesDisplay = ({ templates }) => {
 
   if (!templates || templates.length === 0) return null;
 
+  console.log("Templates received in TemplatesDisplay:", templates);
+
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
       <h3 className="text-2xl font-bold text-gray-800 mb-6">
-        Testable API Endpoints ({templates.length})
+        API Explorer ({templates.length} endpoints)
       </h3>
       <div className="space-y-6">
         {templates.map((template, index) => {
           const endpointId = template.endpoint_id || template.id;
           const displayTemplate = editedTemplates[endpointId] || template;
+
+          console.log(
+            `Template ${endpointId} parameters:`,
+            template.parameters
+          );
 
           return (
             <EditableEndpointCard
@@ -76,7 +86,9 @@ const TemplatesDisplay = ({ templates }) => {
               onEdit={(editedTemplate) =>
                 handleTemplateEdit(endpointId, editedTemplate)
               }
-              onTest={() => handleTestEndpoint(displayTemplate)}
+              onTest={(templateWithParams) =>
+                handleTestEndpoint(templateWithParams)
+              }
               isLoading={testingEndpoint === endpointId}
               testResult={testResults[endpointId]}
             />

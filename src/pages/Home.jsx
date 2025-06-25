@@ -58,9 +58,9 @@ export default function Home() {
     },
   ];
 
-  // tracking function
+  //tracking
   const handleFeatureClick = async (feature, path) => {
-    console.log(`📊 Tracking card click: ${feature}`);
+    console.log(`Tracking card click: ${feature}`);
     await trackAndNavigate(feature, navigate, path);
   };
 
@@ -70,16 +70,16 @@ export default function Home() {
     0
   );
 
-  // user name from email
+  //useremail
   const getUserDisplayName = () => {
     if (!user) return "";
 
-    // user has a name property
+    //username
     if (user.name) {
       return user.name.split(" ")[0];
     }
 
-    // Otherwise, (before @ symbol)
+    //(before @ symbol)
     if (user.email) {
       return user.email.split("@")[0];
     }
@@ -89,7 +89,7 @@ export default function Home() {
 
   return (
     <Layout>
-      {/* Welcome Section */}
+      {/* Welcome*/}
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-gray-800 mb-4">
           {user
@@ -101,27 +101,24 @@ export default function Home() {
         </p>
       </div>
 
-      {/* Stats Overview */}
+      {/* Stats overview*/}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         <StatsCard
           icon={Users}
-          title="Total Users"
+          title="Total Registered Users"
           value={globalStats.total_users?.toLocaleString() || "0"}
-          change="+12% this month"
           color="blue"
         />
         <StatsCard
           icon={BarChart3}
           title="Global API Calls"
           value={globalTotal.toLocaleString()}
-          change="+8% this week"
           color="green"
         />
         <StatsCard
           icon={TrendingUp}
           title={user ? "Your API Calls" : "Average Usage"}
           value={user ? userTotal.toString() : "47"}
-          change={user ? "Last 30 days" : "+15% growth"}
           color="purple"
         />
       </div>
@@ -161,7 +158,7 @@ export default function Home() {
         )}
       </div>
 
-      {/* Quick Actions */}
+      {/*Quick Actions */}
       <div className="mb-8">
         <h3 className="text-2xl font-bold text-gray-800 mb-6">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
