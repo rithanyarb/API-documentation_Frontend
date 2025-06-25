@@ -75,7 +75,7 @@ src/
    Create a `.env` file in the root directory:
    ```env
    VITE_API_URL=http://localhost:8000
-   VITE_KAAYLABS_CODE:your_own_password_code
+   VITE_KAAYLABS_CODE=your_own_password_code
    ```
 
 4. **Start the development server**
