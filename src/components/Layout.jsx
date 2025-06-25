@@ -20,6 +20,7 @@ const Layout = ({ children }) => {
   const { user, logout } = useAuth();
   const { trackNavigationUsage } = useAnalytics();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const tabs = [
     { id: "home", label: "Home", path: "/home", icon: Home },
@@ -56,6 +57,14 @@ const Layout = ({ children }) => {
     logout();
     setShowUserMenu(false);
   };
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
+  React.useEffect(() => {
+    setImageError(false);
+  }, [user?.picture]);
 
   React.useEffect(() => {
     const handleClickOutside = (event) => {
@@ -118,11 +127,15 @@ const Layout = ({ children }) => {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center space-x-2 bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-colors"
                 >
-                  {user.picture ? (
+                  {user.picture && !imageError ? (
                     <img
                       src={user.picture}
-                      alt={user.name}
+                      alt={user.name || "User"}
                       className="w-6 h-6 rounded-full object-cover"
+                      onError={handleImageError}
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
+                      crossOrigin="anonymous"
                     />
                   ) : (
                     <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
@@ -143,12 +156,31 @@ const Layout = ({ children }) => {
                 {showUserMenu && (
                   <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                     <div className="px-4 py-3 border-b border-gray-100">
-                      <p className="text-sm font-medium text-gray-900">
-                        {user.name}
-                      </p>
-                      <p className="text-sm text-gray-500 truncate">
-                        {user.email}
-                      </p>
+                      <div className="flex items-center space-x-3 mb-2">
+                        {user.picture && !imageError ? (
+                          <img
+                            src={user.picture}
+                            alt={user.name || "User"}
+                            className="w-10 h-10 rounded-full object-cover"
+                            onError={handleImageError}
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
+                            crossOrigin="anonymous"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                            <User className="w-6 h-6 text-gray-400" />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {user.name}
+                          </p>
+                          <p className="text-sm text-gray-500 truncate">
+                            {user.email}
+                          </p>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="py-1">
