@@ -6,7 +6,5 @@ export default {
     extend: {},
   },
   plugins: [],
-  corePlugins: {
-    preflight: false, // Disabled tailwind's base styles to avoid conflicts with Ant Design
-  },
+  corePlugins: {},
 };
