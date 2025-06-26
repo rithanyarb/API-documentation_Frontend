@@ -99,7 +99,7 @@ export const AnalyticsProvider = ({ children }) => {
 
     const feature = pathToFeatureMap[path];
     if (feature) {
-      console.log(`📊 Tracking navigation to: ${feature}`);
+      console.log(`Tracking navigation to: ${feature}`);
       await trackFeatureUsage(feature);
     }
   };
