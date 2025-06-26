@@ -1,7 +1,9 @@
 //=== src/api.js ===
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://api-documentation-backend.onrender.com";
 const API_BASE_URL = `${BASE_URL}/api/v1`;
 
 //timeout for large file
@@ -16,11 +18,24 @@ const analyticsClient = axios.create({
   withCredentials: true,
 });
 
+//handle temp tokens
+apiClient.interceptors.request.use((config) => {
+  config.withCredentials = true;
+
+  const tempToken = sessionStorage.getItem("temp_auth_token");
+  if (tempToken && !config.headers.Authorization) {
+    config.headers.Authorization = `Bearer ${tempToken}`;
+  }
+
+  return config;
+});
+
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       console.log("Authentication required");
+      sessionStorage.removeItem("temp_auth_token");
     }
 
     if (error.response?.status === 413) {
@@ -42,21 +57,26 @@ apiClient.interceptors.response.use(
   }
 );
 
-// ============ AUTHENTICATION APIs (Session-based) ============
+// ============ AUTHENTICATION APIs============
 
 export const getCurrentUser = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/authentication/user`, {
-      credentials: "include",
-    });
+    const response = await apiClient.get("/authentication/user");
+    return response.data;
+  } catch (error) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/authentication/user`, {
+        credentials: "include",
+      });
 
-    if (!response.ok) {
+      if (!response.ok) {
+        throw new Error("Not authenticated");
+      }
+
+      return await response.json();
+    } catch (fetchError) {
       throw new Error("Not authenticated");
     }
-
-    return await response.json();
-  } catch (error) {
-    throw new Error(error.message);
   }
 };
 
@@ -66,14 +86,16 @@ export const logout = async () => {
       method: "POST",
       credentials: "include",
     });
+    sessionStorage.removeItem("temp_auth_token");
     return response.ok;
   } catch (error) {
     console.error("Logout failed:", error);
+    sessionStorage.removeItem("temp_auth_token");
     return false;
   }
 };
 
-// ============ OPENAPI JSON / YAML APIs ============
+// ============ OpenAPIJSON APIS ============
 
 export const uploadOpenAPI = async (payload) => {
   try {
@@ -129,11 +151,11 @@ export const uploadCurl = async (payload) => {
   }
 };
 
-// ============ CODE ANALYSIS APIs ============
+// ============ CODE ANALYSIS APIS ============
 
 export const uploadBackendZip = async (file, format = "json") => {
   try {
-    const MAX_SIZE = 100 * 1024 * 1024; // 100MB
+    const MAX_SIZE = 100 * 1024 * 1024; //100MB
     if (file.size > MAX_SIZE) {
       throw new Error(
         `File too large. Maximum size: ${MAX_SIZE / (1024 * 1024)}MB`
